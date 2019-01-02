@@ -14,7 +14,7 @@ import java.util.List;
 import hai.ithust.photopicker.R;
 import hai.ithust.photopicker.entity.GalleryPhoto;
 import hai.ithust.photopicker.entity.PhotoDirectory;
-import hai.ithust.photopicker.event.OnPhotoCheckListener;
+import hai.ithust.photopicker.event.OnPhotoListener;
 import hai.ithust.photopicker.holder.PhotoViewHolder;
 
 /**
@@ -35,9 +35,9 @@ public class PhotoGridAdapter extends RecyclerView.Adapter<PhotoViewHolder> {
     private int mImageSize;
 
     private RequestManager mGlide;
-    private OnPhotoCheckListener mOnItemCheckListener;
+    private OnPhotoListener mOnItemCheckListener;
 
-    public PhotoGridAdapter(RequestManager requestManager, ArrayList<String> originalPhotos, int imageSize, int maxItem, OnPhotoCheckListener listener) {
+    public PhotoGridAdapter(RequestManager requestManager, ArrayList<String> originalPhotos, int imageSize, int maxItem, OnPhotoListener listener) {
         mImageSize = imageSize;
         mGlide = requestManager;
         mMaxItem = maxItem;

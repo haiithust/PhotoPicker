@@ -12,7 +12,7 @@ import java.lang.ref.WeakReference;
 import hai.ithust.photopicker.R;
 import hai.ithust.photopicker.adapter.PhotoGridAdapter;
 import hai.ithust.photopicker.entity.GalleryPhoto;
-import hai.ithust.photopicker.event.OnPhotoCheckListener;
+import hai.ithust.photopicker.event.OnPhotoListener;
 
 /**
  * @author conghai on 12/20/18.
@@ -20,9 +20,9 @@ import hai.ithust.photopicker.event.OnPhotoCheckListener;
 public class PhotoViewHolder extends RecyclerView.ViewHolder {
     private ImageView ivPhoto;
     private View vSelected;
-    private WeakReference<OnPhotoCheckListener> weakListener;
+    private WeakReference<OnPhotoListener> weakListener;
 
-    public PhotoViewHolder(View itemView, OnPhotoCheckListener listener, boolean isCamera) {
+    public PhotoViewHolder(View itemView, OnPhotoListener listener, boolean isCamera) {
         super(itemView);
         ivPhoto = itemView.findViewById(R.id.iv_photo);
         vSelected = itemView.findViewById(R.id.v_selected);

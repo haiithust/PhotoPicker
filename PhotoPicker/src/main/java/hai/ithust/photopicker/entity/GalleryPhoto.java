@@ -13,17 +13,12 @@ public class GalleryPhoto {
         this.path = path;
     }
 
-    public GalleryPhoto() {
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof GalleryPhoto)) return false;
 
-        GalleryPhoto photo = (GalleryPhoto) o;
-
-        return id == photo.id;
+        return id == ((GalleryPhoto) o).id;
     }
 
     @Override

@@ -6,13 +6,12 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.ListPopupWindow;
 import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -34,9 +33,8 @@ import hai.ithust.photopicker.adapter.PhotoGridAdapter;
 import hai.ithust.photopicker.adapter.PopupDirectoryListAdapter;
 import hai.ithust.photopicker.entity.GalleryPhoto;
 import hai.ithust.photopicker.entity.PhotoDirectory;
-import hai.ithust.photopicker.event.OnPhotoCheckListener;
+import hai.ithust.photopicker.event.OnPhotoListener;
 import hai.ithust.photopicker.utils.ImageCaptureManager;
-import hai.ithust.photopicker.utils.MediaStoreHelper;
 import hai.ithust.photopicker.utils.PermissionsConstant;
 import hai.ithust.photopicker.utils.PermissionsUtils;
 
@@ -48,9 +46,11 @@ import static hai.ithust.photopicker.PhotoPicker.EXTRA_MAX_COUNT;
 /**
  * @author conghai on 12/20/18.
  */
-public class PhotoPickerFragment extends Fragment implements OnPhotoCheckListener {
+public class PhotoPickerFragment extends Fragment implements OnPhotoListener, PhotoPickerCallback {
     private static final int SCROLL_THRESHOLD = 30;
     private static final int COUNT_MAX = 4;
+
+    private PhotoPickerPresenter mPresenter;
 
     private ImageCaptureManager mCaptureManager;
     private PhotoGridAdapter mPhotoAdapter;
@@ -84,18 +84,20 @@ public class PhotoPickerFragment extends Fragment implements OnPhotoCheckListene
             mPhotoAdapter = new PhotoGridAdapter(mGlideRequestManager, originalPhotos, imageSize, maxCount, this);
             mListAdapter = new PopupDirectoryListAdapter(mGlideRequestManager);
 
-            MediaStoreHelper.getPhotoDirs(getActivity(), new Bundle(),
-                    new MediaStoreHelper.PhotosResultCallback() {
-                        @Override
-                        public void onResultCallback(List<PhotoDirectory> dirs) {
-                            mPhotoAdapter.setPhotoDirectories(dirs);
-                        }
-                    });
+            mPresenter = new PhotoPickerPresenter(this);
+            mPresenter.create();
+            mPresenter.getPhotos(getContext());
 
             mCaptureManager = new ImageCaptureManager(getActivity());
         }
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mPresenter.destroy();
+        mPresenter = null;
+    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -203,13 +205,12 @@ public class PhotoPickerFragment extends Fragment implements OnPhotoCheckListene
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == ImageCaptureManager.REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
             if (mCaptureManager == null) {
-                FragmentActivity activity = getActivity();
-                mCaptureManager = new ImageCaptureManager(activity);
+                mCaptureManager = new ImageCaptureManager(getContext());
             }
 
             mCaptureManager.galleryAddPic();
             String path = mCaptureManager.getCurrentPhotoPath();
-            if (mPhotoAdapter != null) {
+            if (mPhotoAdapter != null && !TextUtils.isEmpty(path)) {
                 mPhotoAdapter.addNewPhoto(new GalleryPhoto(path.hashCode(), path));
             }
         }
@@ -274,5 +275,10 @@ public class PhotoPickerFragment extends Fragment implements OnPhotoCheckListene
                 PermissionsUtils.checkCameraPermission(this)) {
             openCamera();
         }
+    }
+
+    @Override
+    public void onGetListPhotoSuccess(List<PhotoDirectory> directories) {
+        mPhotoAdapter.setPhotoDirectories(directories);
     }
 }

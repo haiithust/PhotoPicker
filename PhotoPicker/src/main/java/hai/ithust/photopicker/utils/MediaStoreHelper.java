@@ -2,10 +2,7 @@ package hai.ithust.photopicker.utils;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
+import android.provider.MediaStore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,42 +14,31 @@ import static android.provider.MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAM
 import static android.provider.MediaStore.Images.ImageColumns.BUCKET_ID;
 import static android.provider.MediaStore.MediaColumns.DATA;
 import static android.provider.MediaStore.MediaColumns.DATE_ADDED;
+import static android.provider.MediaStore.MediaColumns.MIME_TYPE;
 import static android.provider.MediaStore.MediaColumns.SIZE;
 
 /**
  * @author conghai on 12/20/18.
  */
 public class MediaStoreHelper {
+    public static List<PhotoDirectory> getPhotoDirs(Context context) {
+        List<PhotoDirectory> directories = new ArrayList<>();
 
-    // todo change to RXJava
-    public static void getPhotoDirs(FragmentActivity activity, Bundle args, PhotosResultCallback resultCallback) {
-        activity.getSupportLoaderManager()
-                .initLoader(0, args, new PhotoDirLoaderCallbacks(activity, resultCallback));
-    }
-
-    private static class PhotoDirLoaderCallbacks implements LoaderManager.LoaderCallbacks<Cursor> {
-
-        private Context context;
-        private PhotosResultCallback resultCallback;
-
-        public PhotoDirLoaderCallbacks(Context context, PhotosResultCallback resultCallback) {
-            this.context = context;
-            this.resultCallback = resultCallback;
-        }
-
-        @Override
-        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-            return new PhotoDirectoryLoader(context, false);
-        }
-
-        @Override
-        public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-            if (data == null) return;
-            List<PhotoDirectory> directories = new ArrayList<>();
-            data.moveToFirst();
-
+        String[] protections = {
+                MediaStore.Images.Media._ID,
+                MediaStore.Images.Media.DATA,
+                MediaStore.Images.Media.BUCKET_ID,
+                MediaStore.Images.Media.BUCKET_DISPLAY_NAME,
+                MediaStore.Images.Media.DATE_ADDED,
+                MediaStore.Images.Media.SIZE
+        };
+        Cursor data = context.getApplicationContext().getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                , protections
+                , MIME_TYPE + "=? or " + MIME_TYPE + "=? or " + MIME_TYPE + "=? " + ""
+                , new String[]{"image/jpeg", "image/png", "image/jpg"}
+                , MediaStore.Images.Media.DATE_ADDED + " DESC");
+        if (data != null) {
             while (data.moveToNext()) {
-
                 int imageId = data.getInt(data.getColumnIndexOrThrow(_ID));
                 String bucketId = data.getString(data.getColumnIndexOrThrow(BUCKET_ID));
                 String name = data.getString(data.getColumnIndexOrThrow(BUCKET_DISPLAY_NAME));
@@ -74,20 +60,8 @@ public class MediaStoreHelper {
                     directories.get(directories.indexOf(photoDirectory)).addPhoto(imageId, path);
                 }
             }
-            if (resultCallback != null) {
-                resultCallback.onResultCallback(directories);
-            }
+            data.close();
         }
-
-        @Override
-        public void onLoaderReset(Loader<Cursor> loader) {
-
-        }
+        return directories;
     }
-
-
-    public interface PhotosResultCallback {
-        void onResultCallback(List<PhotoDirectory> directories);
-    }
-
 }
