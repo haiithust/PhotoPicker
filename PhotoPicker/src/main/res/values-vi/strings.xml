@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="__picker_done">Đã xong</string>
+    <string name="__picker_all_image">Tất cả</string>
+    <string name="__picker_over_max_count_tips">Bạn chỉ được phép chọn %1$d ảnh</string>
+    <string name="__picker_select_picture">Chọn ảnh</string>
+</resources>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:id="@+id/action_bar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/color_action_bar">
+
+        <ImageView
+            android:id="@+id/iv_navigation"
+            android:layout_width="?attr/actionBarSize"
+            android:layout_height="?attr/actionBarSize"
+            android:scaleType="center"
+            android:src="@drawable/picker_nav_back" />
+
+        <TextView
+            android:id="@+id/tv_directory_category"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="?attr/actionBarSize"
+            android:layout_marginEnd="?attr/actionBarSize"
+            android:drawableEnd="@drawable/picker_ic_arrow_drop_down"
+            android:drawablePadding="8dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="@string/__picker_select_picture"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </FrameLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_photos"
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1"
+        android:paddingStart="2dp"
+        android:paddingEnd="2dp" />
+
+    <Button
+        android:id="@+id/button"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/color_bottom_bar"
+        android:gravity="center"
+        android:text="@string/__picker_done"
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
+        android:textStyle="bold" />
+</LinearLayout>

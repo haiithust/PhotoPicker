@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="__picker_done">Done</string>
+  <string name="__picker_all_image">All Images</string>
+  <string name="__picker_over_max_count_tips">You can only select %1$d images</string>
+  <string name="__picker_select_picture">Select Pictures</string>
+</resources>
