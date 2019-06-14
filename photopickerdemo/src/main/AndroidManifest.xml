@@ -26,7 +26,6 @@
         </activity>
 
         <activity
-            android:name="hai.ithust.photopicker.PhotoPickerActivity"
-            android:theme="@style/customTheme" />
+            android:name="hai.ithust.photopicker.PhotoPickerActivity" />
     </application>
 </manifest>

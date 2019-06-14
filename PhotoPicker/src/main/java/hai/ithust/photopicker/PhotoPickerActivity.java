@@ -14,23 +14,11 @@ public class PhotoPickerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.picker_activity_photo_picker);
         if (savedInstanceState == null) {
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.container, PhotoPickerFragment.newInstance(getIntent().getExtras()), PhotoPickerFragment.class.getSimpleName())
-                    .commit();
-            getSupportFragmentManager().executePendingTransactions();
-        }
-    }
-
-
-    @Override
-    public void onBackPressed() {
-        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
-            getSupportFragmentManager().popBackStack();
-        } else {
-            super.onBackPressed();
+                    .replace(android.R.id.content, PhotoPickerFragment.newInstance(getIntent().getExtras()), PhotoPickerFragment.class.getSimpleName())
+                    .commitAllowingStateLoss();
         }
     }
 }

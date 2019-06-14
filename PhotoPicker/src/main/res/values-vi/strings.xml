@@ -4,4 +4,6 @@
     <string name="__picker_all_image">Tất cả</string>
     <string name="__picker_over_max_count_tips">Bạn chỉ được phép chọn %1$d ảnh</string>
     <string name="__picker_select_picture">Chọn ảnh</string>
+    <string name="pp_select_directory_title">Chọn thư mục</string>
+    <string name="pp_gallery">Thư viện</string>
 </resources>

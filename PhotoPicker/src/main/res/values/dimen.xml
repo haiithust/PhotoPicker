@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <dimen name="picker_padding_small">4dp</dimen>
-    <dimen name="__picker_item_directory_height">64dp</dimen>
-</resources>

@@ -32,7 +32,7 @@ public class MediaStoreHelper {
                 MediaStore.Images.Media.DATE_ADDED,
                 MediaStore.Images.Media.SIZE
         };
-        Cursor data = context.getApplicationContext().getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        Cursor data = context.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI
                 , protections
                 , MIME_TYPE + "=? or " + MIME_TYPE + "=? or " + MIME_TYPE + "=? " + ""
                 , new String[]{"image/jpeg", "image/png", "image/jpg"}

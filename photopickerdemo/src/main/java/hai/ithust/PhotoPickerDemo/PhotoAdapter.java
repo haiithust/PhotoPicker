@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import hai.ithust.photopicker.R;
-import hai.ithust.photopicker.holder.PhotoViewHolder;
 
 public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHolder> {
     public static final int TYPE_ADD = 1;
@@ -86,8 +85,6 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
         private PhotoViewHolder(View itemView) {
             super(itemView);
             ivPhoto = itemView.findViewById(R.id.iv_photo);
-            vSelected = itemView.findViewById(R.id.v_selected);
-            if (vSelected != null) vSelected.setVisibility(View.GONE);
         }
     }
 

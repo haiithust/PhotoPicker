@@ -18,11 +18,8 @@ android {
 }
 
 dependencies {
-  implementation "com.android.support:support-v4:$supportLibVersion"
   implementation "com.android.support:appcompat-v7:$supportLibVersion"
-  implementation "com.android.support:design:$supportLibVersion"
   implementation "com.android.support:recyclerview-v7:$supportLibVersion"
-  implementation "com.android.support:support-annotations:$supportLibVersion"
   implementation "com.github.bumptech.glide:glide:$glideLibVersion"
   implementation 'io.reactivex.rxjava2:rxjava:2.2.4'
   implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'

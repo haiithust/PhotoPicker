@@ -13,11 +13,11 @@ import io.reactivex.schedulers.Schedulers;
 /**
  * @author conghai on 1/2/19.
  */
-public class PhotoPickerPresenter {
+class PhotoPickerPresenter {
     private PhotoPickerCallback mCallback;
     private CompositeDisposable mDisposable;
 
-    public PhotoPickerPresenter(PhotoPickerCallback callback) {
+    PhotoPickerPresenter(PhotoPickerCallback callback) {
         mCallback = callback;
     }
 
@@ -30,8 +30,8 @@ public class PhotoPickerPresenter {
         mCallback = null;
     }
 
-    public void getPhotos(final Context context) {
-        mDisposable.add(Observable.fromCallable(() -> MediaStoreHelper.getPhotoDirs(context))
+    void getPhotos(Context context) {
+        mDisposable.add(Observable.fromCallable(() -> MediaStoreHelper.getPhotoDirs(context.getApplicationContext()))
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(list -> {

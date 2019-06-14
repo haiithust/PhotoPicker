@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 
 import java.util.ArrayList;
@@ -15,37 +16,80 @@ import hai.ithust.photopicker.R;
 import hai.ithust.photopicker.entity.GalleryPhoto;
 import hai.ithust.photopicker.entity.PhotoDirectory;
 import hai.ithust.photopicker.event.OnPhotoListener;
-import hai.ithust.photopicker.holder.PhotoViewHolder;
 
 /**
  * @author conghai on 12/20/18.
  */
 public class PhotoGridAdapter extends RecyclerView.Adapter<PhotoViewHolder> {
-    private static final int VIEW_TYPE_PHOTO = 1;
-    private static final int VIEW_TYPE_CAMERA = 2;
-
-    private static final int ALL_PHOTO = -1;
-    public static final int CAMERA_ITEM_ID = -1;
+    private static final int ALL_PHOTO = 0;
+    private static final int SCROLL_THRESHOLD = 30;
 
     private List<PhotoDirectory> mPhotoDirectories = new ArrayList<>();
     private List<GalleryPhoto> mPhotos = new ArrayList<>();
     private ArrayList<String> mSelectedPhotos = new ArrayList<>();
-    private int mDirectoryCategory = ALL_PHOTO;
+    private int mDirectoryCategoryIndex = ALL_PHOTO;
     private int mMaxItem;
-    private int mImageSize;
 
+    private RecyclerView mRecyclerView;
     private RequestManager mGlide;
     private OnPhotoListener mOnItemCheckListener;
+    private RecyclerView.OnScrollListener mScrollListener;
 
-    public PhotoGridAdapter(RequestManager requestManager, ArrayList<String> originalPhotos, int imageSize, int maxItem, OnPhotoListener listener) {
-        mImageSize = imageSize;
-        mGlide = requestManager;
+    public PhotoGridAdapter(ArrayList<String> originalPhotos, int maxItem, OnPhotoListener listener) {
         mMaxItem = maxItem;
         if (originalPhotos != null) mSelectedPhotos.addAll(originalPhotos);
-
-        // init item camera
-        mPhotos.add(new GalleryPhoto(CAMERA_ITEM_ID, ""));
         mOnItemCheckListener = listener;
+    }
+
+    @Override
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        mRecyclerView = recyclerView;
+        mGlide = Glide.with(mRecyclerView.getContext());
+
+        mScrollListener = new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (Math.abs(dy) < SCROLL_THRESHOLD) {
+                    resumeLoadImage();
+                }
+            }
+
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    resumeLoadImage();
+                } else if (newState == RecyclerView.SCROLL_STATE_SETTLING) {
+                    pauseLoadImage();
+                }
+            }
+        };
+        mRecyclerView.addOnScrollListener(mScrollListener);
+    }
+
+    @Override
+    public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView);
+        mRecyclerView.removeOnScrollListener(mScrollListener);
+        mGlide.onDestroy();
+    }
+
+    @Override
+    @NonNull
+    public PhotoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.picker_item_photo, parent, false);
+        return new PhotoViewHolder(itemView, mOnItemCheckListener);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull PhotoViewHolder holder, int position) {
+        holder.bindData(mPhotos.get(position), mGlide, mSelectedPhotos.indexOf(mPhotos.get(position).getPath()));
+    }
+
+    @Override
+    public int getItemCount() {
+        return mPhotos.size();
     }
 
     // return true if update success, false if not. It means max image can selected
@@ -71,89 +115,59 @@ public class PhotoGridAdapter extends RecyclerView.Adapter<PhotoViewHolder> {
 
     public void setPhotoDirectories(List<PhotoDirectory> photoDirectories) {
         mPhotoDirectories.clear();
-        if (mPhotoDirectories != null && !photoDirectories.isEmpty()) {
+        if (!photoDirectories.isEmpty()) {
             mPhotoDirectories.addAll(photoDirectories);
         }
 
-        if (mDirectoryCategory == ALL_PHOTO) {
+        if (mDirectoryCategoryIndex == ALL_PHOTO) {
             for (PhotoDirectory directory : mPhotoDirectories) {
                 if (directory != null) {
                     mPhotos.addAll(directory.getPhotos());
                 }
             }
-        } else if (mDirectoryCategory >= 0 && mDirectoryCategory < mPhotoDirectories.size()) {
-            mPhotos.addAll(mPhotoDirectories.get(mDirectoryCategory).getPhotos());
+        } else if (mDirectoryCategoryIndex >= 0 && mDirectoryCategoryIndex < mPhotoDirectories.size()) {
+            mPhotos.addAll(mPhotoDirectories.get(mDirectoryCategoryIndex).getPhotos());
         }
 
         notifyDataSetChanged();
     }
 
-    @Override
-    public int getItemViewType(int position) {
-        if (mPhotos.get(position).getId() == CAMERA_ITEM_ID) {
-            return VIEW_TYPE_CAMERA;
-        }
-        return VIEW_TYPE_PHOTO;
-    }
-
-    @Override
-    public PhotoViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.picker_item_photo, parent, false);
-        return new PhotoViewHolder(itemView, mOnItemCheckListener, viewType == VIEW_TYPE_CAMERA);
-    }
-
-    @Override
-    public void onBindViewHolder(@NonNull PhotoViewHolder holder, int position) {
-        holder.bindData(mPhotos.get(position), mGlide, mImageSize, isSelected(mPhotos.get(position)));
-    }
-
-    @Override
-    public int getItemCount() {
-        return mPhotos.size();
-    }
-
     public void addNewPhoto(GalleryPhoto photo) {
         if (photo != null) {
-            if (mPhotos.size() > 1) {
-                mPhotos.add(1, photo);
-                if (mPhotoDirectories.size() > 0) {
-                    mPhotoDirectories.get(0).addPhoto(photo);
-                }
-                notifyItemInserted(1);
+            mPhotos.add(0, photo);
+            if (mPhotoDirectories.size() > 0) {
+                mPhotoDirectories.get(0).addPhoto(photo);
             }
+            notifyItemInserted(0);
+            mRecyclerView.scrollToPosition(0);
         }
     }
 
-    public List<PhotoDirectory> getPhotoDirectories() {
-        return mPhotoDirectories;
-    }
-
-    public boolean isSelected(GalleryPhoto photo) {
-        return mSelectedPhotos.contains(photo.getPath());
-    }
-
-    public void toggleSelection(GalleryPhoto photo) {
-        if (mSelectedPhotos.contains(photo.getPath())) {
-            mSelectedPhotos.remove(photo.getPath());
-        } else {
-            mSelectedPhotos.add(photo.getPath());
+    public List<String> getPhotoDirectories() {
+        ArrayList<String> directories = new ArrayList<>();
+        for (PhotoDirectory directory : mPhotoDirectories) {
+            directories.add(directory.getName());
         }
+        return directories;
+    }
+
+    public int getDirectoryCategoryIndex() {
+        return mDirectoryCategoryIndex;
     }
 
     public void setCurrentDirectoryIndex(int currentDirectoryIndex) {
-        if (currentDirectoryIndex != mDirectoryCategory) {
+        if (currentDirectoryIndex != mDirectoryCategoryIndex) {
             mPhotos.clear();
-            mPhotos.add(new GalleryPhoto(CAMERA_ITEM_ID, ""));
             if (currentDirectoryIndex == ALL_PHOTO) {
-                mDirectoryCategory = ALL_PHOTO;
+                mDirectoryCategoryIndex = ALL_PHOTO;
                 for (PhotoDirectory directory : mPhotoDirectories) {
                     if (directory != null) {
                         mPhotos.addAll(directory.getPhotos());
                     }
                 }
-            } else if (currentDirectoryIndex >= 0 && currentDirectoryIndex < mPhotoDirectories.size()) {
-                mDirectoryCategory = currentDirectoryIndex;
-                mPhotos.addAll(mPhotoDirectories.get(currentDirectoryIndex).getPhotos());
+            } else if (currentDirectoryIndex > 0 && currentDirectoryIndex <= mPhotoDirectories.size()) {
+                mDirectoryCategoryIndex = currentDirectoryIndex;
+                mPhotos.addAll(mPhotoDirectories.get(currentDirectoryIndex - 1).getPhotos());
             }
             notifyDataSetChanged();
         }
@@ -164,7 +178,36 @@ public class PhotoGridAdapter extends RecyclerView.Adapter<PhotoViewHolder> {
         return mSelectedPhotos;
     }
 
+    public boolean isSelectPhoto() {
+        return !mSelectedPhotos.isEmpty();
+    }
+
     public int getMaxItem() {
         return mMaxItem;
+    }
+
+    private void resumeLoadImage() {
+        if (mGlide.isPaused()) {
+            mGlide.resumeRequests();
+        }
+    }
+
+    private void pauseLoadImage() {
+        if (!mGlide.isPaused()) {
+            mGlide.pauseRequests();
+        }
+    }
+
+
+    private boolean isSelected(GalleryPhoto photo) {
+        return mSelectedPhotos.contains(photo.getPath());
+    }
+
+    private void toggleSelection(GalleryPhoto photo) {
+        if (mSelectedPhotos.contains(photo.getPath())) {
+            mSelectedPhotos.remove(photo.getPath());
+        } else {
+            mSelectedPhotos.add(photo.getPath());
+        }
     }
 }

@@ -2,9 +2,12 @@ package hai.ithust.photopicker.utils;
 
 import android.app.Activity;
 import android.content.pm.PackageManager;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+
+import java.util.Objects;
 
 import static android.Manifest.permission.CAMERA;
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
@@ -25,8 +28,8 @@ public class PermissionsUtils {
         return true;
     }
 
-    public static boolean checkWriteStoragePermission(Fragment fragment) {
-        if (!(ContextCompat.checkSelfPermission(fragment.getContext(), WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)) {
+    public static boolean checkWriteStoragePermission(@NonNull Fragment fragment) {
+        if (!(ContextCompat.checkSelfPermission(Objects.requireNonNull(fragment.getContext()), WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)) {
             fragment.requestPermissions(PermissionsConstant.PERMISSIONS_EXTERNAL_WRITE,
                     PermissionsConstant.REQUEST_EXTERNAL_WRITE);
             return false;
@@ -34,8 +37,8 @@ public class PermissionsUtils {
         return true;
     }
 
-    public static boolean checkCameraPermission(Fragment fragment) {
-        if (!(ContextCompat.checkSelfPermission(fragment.getContext(), CAMERA) == PackageManager.PERMISSION_GRANTED)) {
+    public static boolean checkCameraPermission(@NonNull Fragment fragment) {
+        if (!(ContextCompat.checkSelfPermission(Objects.requireNonNull(fragment.getContext()), CAMERA) == PackageManager.PERMISSION_GRANTED)) {
             fragment.requestPermissions(PermissionsConstant.PERMISSIONS_CAMERA,
                     PermissionsConstant.REQUEST_CAMERA);
             return false;

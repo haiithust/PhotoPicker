@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <hai.ithust.photopicker.widget.SquareItemLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginStart="2dp"
@@ -10,17 +11,26 @@
         android:id="@+id/iv_photo"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:adjustViewBounds="true"
-        android:background="@drawable/picker_photo_bg"
-        android:padding="0.5dp"
-        android:scaleType="centerCrop" />
+        android:adjustViewBounds="true" />
 
-    <ImageView
-        android:id="@+id/v_selected"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+    <TextView
+        android:id="@+id/tv_selected"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
         android:layout_gravity="end"
-        android:padding="8dp"
-        android:src="@drawable/picker_checkbox_bg" />
+        android:background="@drawable/picker_bg_number_selected"
+        android:gravity="center"
+        android:textColor="@android:color/white"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:visibility="invisible"
+        tools:text="1" />
+
+    <View
+        android:id="@+id/frame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/picker_photo_bg"
+        android:visibility="invisible" />
 
 </hai.ithust.photopicker.widget.SquareItemLayout>
