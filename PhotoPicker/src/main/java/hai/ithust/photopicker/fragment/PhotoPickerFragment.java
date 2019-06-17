@@ -93,6 +93,7 @@ public class PhotoPickerFragment extends Fragment implements OnPhotoListener, Ph
         RecyclerView recyclerView = rootView.findViewById(R.id.rv_photos);
         StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(column, OrientationHelper.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setItemAnimator(null);
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(mPhotoAdapter);
 

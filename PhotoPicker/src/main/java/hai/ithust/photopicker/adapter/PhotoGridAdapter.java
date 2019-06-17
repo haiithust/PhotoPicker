@@ -96,10 +96,20 @@ public class PhotoGridAdapter extends RecyclerView.Adapter<PhotoViewHolder> {
     public boolean updatePhoto(int position) {
         if (position >= 0 && position < mPhotos.size()) {
             GalleryPhoto photo = mPhotos.get(position);
-            if (isSelected(photo)) {
+            int selectedNumber = mSelectedPhotos.indexOf(photo.getPath());
+            if (selectedNumber > -1) {
                 // user unselected photo
                 toggleSelection(photo);
                 notifyItemChanged(position);
+
+                // if user unselected last number, we no need calculate index again
+                if (selectedNumber < mSelectedPhotos.size()) {
+                    for (int i = 0; i < mPhotos.size(); i++) {
+                        if (isSelected(mPhotos.get(i))) {
+                            notifyItemChanged(i);
+                        }
+                    }
+                }
                 return true;
             } else {
                 // user selected photo
@@ -197,7 +207,6 @@ public class PhotoGridAdapter extends RecyclerView.Adapter<PhotoViewHolder> {
             mGlide.pauseRequests();
         }
     }
-
 
     private boolean isSelected(GalleryPhoto photo) {
         return mSelectedPhotos.contains(photo.getPath());
