@@ -1,5 +1,6 @@
 package hai.ithust.photopicker.fragment;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -174,11 +175,7 @@ public class PhotoPickerFragment extends Fragment implements OnPhotoListener, Ph
         if (mPhotoAdapter != null) {
             boolean isUpdated = mPhotoAdapter.updatePhoto(position);
 
-            if (mPhotoAdapter.isSelectPhoto()) {
-                mIvRightAction.setImageResource(R.drawable.picker_ic_done);
-            } else {
-                mIvRightAction.setImageResource(R.drawable.picker_ic_camera);
-            }
+            updateRightAction();
             if (!isUpdated) {
                 Toast.makeText(getContext(), getString(R.string.__picker_over_max_count_tips, mPhotoAdapter.getMaxItem()), Toast.LENGTH_SHORT).show();
             }
@@ -196,6 +193,7 @@ public class PhotoPickerFragment extends Fragment implements OnPhotoListener, Ph
     @Override
     public void onGetListPhotoSuccess(List<PhotoDirectory> directories) {
         mPhotoAdapter.setPhotoDirectories(directories);
+        updateRightAction();
     }
 
     private void openCamera() {
@@ -210,8 +208,12 @@ public class PhotoPickerFragment extends Fragment implements OnPhotoListener, Ph
         if (getActivity() != null) {
             Intent intent = new Intent();
             intent.putStringArrayListExtra(PhotoPicker.KEY_SELECTED_PHOTOS, mPhotoAdapter.getSelectedPhotos());
-            getActivity().setResult(RESULT_OK, intent);
-            getActivity().finish();
+            if (getTargetFragment() != null) {
+                getTargetFragment().onActivityResult(getTargetRequestCode(), RESULT_OK, intent);
+            } else {
+                getActivity().setResult(RESULT_OK, intent);
+                getActivity().finish();
+            }
         }
     }
 
@@ -228,5 +230,13 @@ public class PhotoPickerFragment extends Fragment implements OnPhotoListener, Ph
                     dialog.dismiss();
                 });
         return builder.create();
+    }
+
+    private void updateRightAction() {
+        if (mPhotoAdapter.isSelectPhoto()) {
+            mIvRightAction.setImageResource(R.drawable.picker_ic_done);
+        } else {
+            mIvRightAction.setImageResource(R.drawable.picker_ic_camera);
+        }
     }
 }

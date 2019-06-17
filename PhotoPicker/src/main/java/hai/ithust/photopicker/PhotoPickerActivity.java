@@ -13,7 +13,12 @@ public class PhotoPickerActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        if (getIntent() != null) {
+            int themeId = getIntent().getIntExtra(PhotoPicker.EXTRA_THEME, -1);
+            if (themeId > 0) {
+                setTheme(themeId);
+            }
+        }
         if (savedInstanceState == null) {
             getSupportFragmentManager()
                     .beginTransaction()
