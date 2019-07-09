@@ -28,6 +28,15 @@ public class PermissionsUtils {
         return true;
     }
 
+    public static boolean checkReadStoragePermission(Fragment fragment) {
+        if (!(ContextCompat.checkSelfPermission(Objects.requireNonNull(fragment.getContext()), READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)) {
+            fragment.requestPermissions(PermissionsConstant.PERMISSIONS_EXTERNAL_READ,
+                    PermissionsConstant.REQUEST_EXTERNAL_READ);
+            return false;
+        }
+        return true;
+    }
+
     public static boolean checkWriteStoragePermission(@NonNull Fragment fragment) {
         if (!(ContextCompat.checkSelfPermission(Objects.requireNonNull(fragment.getContext()), WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)) {
             fragment.requestPermissions(PermissionsConstant.PERMISSIONS_EXTERNAL_WRITE,

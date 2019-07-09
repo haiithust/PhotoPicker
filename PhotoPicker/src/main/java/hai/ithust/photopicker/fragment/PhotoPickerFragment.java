@@ -112,7 +112,7 @@ public class PhotoPickerFragment extends Fragment implements OnPhotoListener, Ph
             if (mPhotoAdapter != null && mPhotoAdapter.isSelectPhoto()) {
                 setResult();
             } else {
-                openCamera();
+                onOpenCamera();
             }
         });
 
@@ -147,10 +147,7 @@ public class PhotoPickerFragment extends Fragment implements OnPhotoListener, Ph
             switch (requestCode) {
                 case PermissionsConstant.REQUEST_CAMERA:
                 case PermissionsConstant.REQUEST_EXTERNAL_WRITE:
-                    if (PermissionsUtils.checkWriteStoragePermission(this) &&
-                            PermissionsUtils.checkCameraPermission(this)) {
-                        openCamera();
-                    }
+                    onOpenCamera();
                     break;
             }
         }
