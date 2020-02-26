@@ -1,6 +1,6 @@
 package hai.ithust.photopicker.adapter;
 
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -11,7 +11,6 @@ import java.io.File;
 import java.lang.ref.WeakReference;
 
 import hai.ithust.photopicker.R;
-import hai.ithust.photopicker.adapter.PhotoGridAdapter;
 import hai.ithust.photopicker.entity.GalleryPhoto;
 import hai.ithust.photopicker.event.OnPhotoListener;
 

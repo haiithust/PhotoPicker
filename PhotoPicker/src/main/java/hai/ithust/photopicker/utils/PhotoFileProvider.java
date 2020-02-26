@@ -1,6 +1,6 @@
 package hai.ithust.photopicker.utils;
 
-import android.support.v4.content.FileProvider;
+import androidx.core.content.FileProvider;
 
 /**
  * @author conghai on 12/20/18.
