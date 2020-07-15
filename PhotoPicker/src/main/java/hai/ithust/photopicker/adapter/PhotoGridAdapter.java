@@ -2,6 +2,7 @@ package hai.ithust.photopicker.adapter;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -156,7 +157,9 @@ public class PhotoGridAdapter extends RecyclerView.Adapter<PhotoViewHolder> {
     public List<String> getPhotoDirectories() {
         ArrayList<String> directories = new ArrayList<>();
         for (PhotoDirectory directory : mPhotoDirectories) {
-            directories.add(directory.getName());
+            if (directory.getName() != null) {
+                directories.add(directory.getName());
+            }
         }
         return directories;
     }
