@@ -20,15 +20,15 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
     private static final int TYPE_PHOTO = 2;
     final static int MAX = 9;
 
-    private ArrayList<String> mPhotoPaths = new ArrayList<>();
+    private ArrayList<Uri> mPhotoPaths = new ArrayList<>();
     private View.OnClickListener mClickListener;
 
-    public PhotoAdapter(ArrayList<String> photoPath, View.OnClickListener listener) {
+    public PhotoAdapter(ArrayList<Uri> photoPath, View.OnClickListener listener) {
         mPhotoPaths.addAll(photoPath);
         mClickListener = listener;
     }
 
-    public void setPhotoPaths(List<String> photoPaths) {
+    public void setPhotoPaths(List<Uri> photoPaths) {
         mPhotoPaths.clear();
         if (photoPaths != null && !photoPaths.isEmpty()) {
             mPhotoPaths.addAll(photoPaths);
@@ -55,9 +55,8 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
     @Override
     public void onBindViewHolder(final PhotoViewHolder holder, final int position) {
         if (getItemViewType(position) == TYPE_PHOTO) {
-            Uri uri = Uri.fromFile(new File(mPhotoPaths.get(position)));
             Glide.with(holder.itemView.getContext())
-                    .load(uri)
+                    .load(mPhotoPaths.get(position))
                     .centerCrop()
                     .into(holder.ivPhoto);
         }

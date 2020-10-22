@@ -3,6 +3,7 @@ package hai.ithust.photopicker;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -34,8 +35,8 @@ public class PhotoPicker {
     }
 
     public static class PhotoPickerBuilder {
-        private Bundle mPickerOptionsBundle;
-        private Intent mPickerIntent;
+        private final Bundle mPickerOptionsBundle;
+        private final Intent mPickerIntent;
 
         public PhotoPickerBuilder() {
             mPickerOptionsBundle = new Bundle();
@@ -112,8 +113,8 @@ public class PhotoPicker {
             return this;
         }
 
-        public PhotoPickerBuilder setSelected(ArrayList<String> imagesUri) {
-            mPickerOptionsBundle.putStringArrayList(EXTRA_ORIGINAL_PHOTOS, imagesUri);
+        public PhotoPickerBuilder setSelected(ArrayList<Uri> imagesUri) {
+            mPickerOptionsBundle.putParcelableArrayList(EXTRA_ORIGINAL_PHOTOS, imagesUri);
             return this;
         }
 
