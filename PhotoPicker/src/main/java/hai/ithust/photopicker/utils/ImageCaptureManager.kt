@@ -70,7 +70,7 @@ class ImageCaptureManager(private val context: Context) {
         val values = ContentValues(4).apply {
             put(MediaStore.Images.Media.TITLE, fileName)
             put(MediaStore.Images.Media.DATE_ADDED, (System.currentTimeMillis() / 1000).toInt())
-            put(MediaStore.Images.Media.MIME_TYPE, "image/jpb")
+            put(MediaStore.Images.Media.MIME_TYPE, "image/jpg")
         }.apply {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
                 val storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
