@@ -130,7 +130,7 @@ class PhotoGridAdapter(
     }
 
     val photoDirectoryNames: List<String>
-        get() = photoDirectories.filter { it.name.isNullOrEmpty() }.map { it.name!! }
+        get() = photoDirectories.filter { !it.name.isNullOrEmpty() }.map { it.name!! }
 
     fun setCurrentDirectoryIndex(currentDirectoryIndex: Int) {
         if (currentDirectoryIndex != directoryCategoryIndex) {
