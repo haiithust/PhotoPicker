@@ -3,6 +3,7 @@ package hai.ithust.photopicker.utils
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
+import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -20,6 +21,7 @@ import java.util.Locale
  * http://developer.android.com/training/camera/photobasics.html
  */
 class ImageCaptureManager(private val context: Context) {
+    private var currentPath: String? = null
     var currentUri: Uri? = null
 
     @Throws(IOException::class)
@@ -42,24 +44,19 @@ class ImageCaptureManager(private val context: Context) {
 
     @Suppress("deprecation")
     fun galleryAddPic() {
-        if (currentUri == null) return
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-            val mediaScanIntent = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
-            mediaScanIntent.data = currentUri
-            context.sendBroadcast(mediaScanIntent)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q && !currentPath.isNullOrEmpty()) {
+            MediaScannerConnection.scanFile(context.applicationContext, arrayOf(currentPath), null, null)
         }
     }
 
     fun onSaveInstanceState(savedInstanceState: Bundle) {
-        if (currentUri != null) {
-            savedInstanceState.putParcelable(CAPTURED_PHOTO_PATH_KEY, currentUri)
-        }
+        savedInstanceState.putParcelable(CAPTURED_PHOTO_URI_KEY, currentUri)
+        savedInstanceState.putString(CAPTURED_PHOTO_PATH_KEY, currentPath)
     }
 
     fun onRestoreInstanceState(savedInstanceState: Bundle?) {
-        if (savedInstanceState != null && savedInstanceState.containsKey(CAPTURED_PHOTO_PATH_KEY)) {
-            currentUri = savedInstanceState.getParcelable(CAPTURED_PHOTO_PATH_KEY)
-        }
+        currentUri = savedInstanceState?.getParcelable(CAPTURED_PHOTO_URI_KEY)
+        currentPath = savedInstanceState?.getParcelable(CAPTURED_PHOTO_PATH_KEY)
     }
 
     @Suppress("deprecation")
@@ -81,7 +78,10 @@ class ImageCaptureManager(private val context: Context) {
                     }
                 }
                 val image = File(storageDir, fileName)
+                currentPath = image.absolutePath
                 put(MediaStore.Images.Media.DATA, image.absolutePath)
+            } else {
+                put(MediaStore.Images.Media.RELATIVE_PATH, "Photos")
             }
         }
 
@@ -89,7 +89,8 @@ class ImageCaptureManager(private val context: Context) {
     }
 
     companion object {
-        private const val CAPTURED_PHOTO_PATH_KEY = "PHOTO_URI"
+        private const val CAPTURED_PHOTO_URI_KEY = "PHOTO_URI"
+        private const val CAPTURED_PHOTO_PATH_KEY = "PHOTO_PATH"
         const val REQUEST_TAKE_PHOTO = 1
     }
 }
