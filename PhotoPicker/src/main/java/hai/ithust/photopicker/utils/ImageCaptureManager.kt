@@ -37,7 +37,6 @@ class ImageCaptureManager(private val context: Context) {
                 currentUri = photoUri
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
             }
-
         }
         return takePictureIntent
     }
@@ -67,7 +66,7 @@ class ImageCaptureManager(private val context: Context) {
         val values = ContentValues(4).apply {
             put(MediaStore.Images.Media.TITLE, fileName)
             put(MediaStore.Images.Media.DATE_ADDED, (System.currentTimeMillis() / 1000).toInt())
-            put(MediaStore.Images.Media.MIME_TYPE, "image/jpg")
+            put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
         }.apply {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
                 val storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
@@ -81,7 +80,7 @@ class ImageCaptureManager(private val context: Context) {
                 currentPath = image.absolutePath
                 put(MediaStore.Images.Media.DATA, image.absolutePath)
             } else {
-                put(MediaStore.Images.Media.RELATIVE_PATH, "Photos")
+                put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures")
             }
         }
 
